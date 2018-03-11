@@ -1,0 +1,27 @@
+{
+	"name": "skeeks/yii2-config",
+	"description": "Form package for SkeekS CMS",
+	"keywords": ["yii", "skeeks", "framework", "component", "config"],
+    "homepage": "https://cms.skeeks.com/",
+	"type": "yii2-extension",
+	"license": "BSD-3-Clause",
+	"support": {
+        "issues": "https://skeeks.com/",
+        "wiki": "https://cms.skeeks.com/docs/",
+        "source": "https://github.com/skeeks-semenov/yii2-config"
+    },
+	"authors": [
+		{
+			"name": "Semenov Alexander",
+			"email": "semenov@skeeks.com"
+		}
+	],
+	"require": {
+		"yiisoft/yii2": "~2.0"
+	},
+    "autoload": {
+        "psr-4": {
+            "skeeks\\yii2\\config\\": "src/"
+        }
+    }
+}
