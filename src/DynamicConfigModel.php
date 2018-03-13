@@ -21,7 +21,8 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
     /**
      * @var array
      */
-    public $defineAttributes;
+    protected $_defineAttributes;
+
     /**
      * @var array
      */
@@ -31,12 +32,26 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
      * @var array
      */
     protected $_rules = [];
+    /**
+     * @var array
+     */
+    protected $_attributeLabels = [];
+
+    /**
+     * @var array
+     */
+    protected $_attributeHints = [];
 
     public function init()
     {
-        if ($this->defineAttributes && is_array($this->defineAttributes)) {
-            foreach ($this->defineAttributes as $key => $value) {
-                $this->defineAttribute($key, $value);
+        if ($this->_defineAttributes && is_array($this->_defineAttributes)) {
+            foreach ($this->_defineAttributes as $key => $value) {
+                if (is_int($key) && is_string($value)) {
+                    $this->defineAttribute($value, null);
+                } else {
+                    $this->defineAttribute($key, $value);
+                }
+
             }
         }
 
@@ -48,10 +63,28 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
      */
     public function rules()
     {
-        return ArrayHelper::merge(parent::rules(), (array) $this->rules);
+        return ArrayHelper::merge(parent::rules(), (array)$this->_rules);
     }
+
     /**
-     * @param $fields
+     * @return array
+     */
+    public function attributeLabels()
+    {
+        return ArrayHelper::merge(parent::attributeLabels(), (array)$this->_attributeLabels);
+    }
+
+    /**
+     * @return array
+     */
+    public function attributeHints()
+    {
+        return ArrayHelper::merge(parent::attributeHints(), (array)$this->_attributeHints);
+    }
+
+
+    /**
+     * @param array $fields
      * @return $this
      */
     public function setFields($fields = [])
@@ -59,8 +92,9 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
         $this->_fields = $fields;
         return $this;
     }
+
     /**
-     * @param $fields
+     * @param array $rules
      * @return $this
      */
     public function setRules($rules = [])
@@ -70,11 +104,33 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
     }
 
     /**
-     * @return array
+     * @param array $attributeLabels
+     * @return $this
      */
-    public function getRules()
+    public function setAttributeLabels($attributeLabels = [])
     {
-        return $this->_rules;
+        $this->_attributeLabels = $attributeLabels;
+        return $this;
+    }
+
+    /**
+     * @param array $attributeHints
+     * @return $this
+     */
+    public function setAttributeHints($attributeHints = [])
+    {
+        $this->_attributeHints = $attributeHints;
+        return $this;
+    }
+
+    /**
+     * @param array $defineAttributes
+     * @return $this
+     */
+    public function setDefineAttributes($defineAttributes = [])
+    {
+        $this->_defineAttributes = $defineAttributes;
+        return $this;
     }
 
     /**
@@ -83,7 +139,7 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
      */
     public function builderFields()
     {
-        return [];
+        return $this->_fields;
     }
 
     /**
@@ -96,10 +152,23 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
     }
 
     /**
-     * @return string
+     * @var ConfigBehavior
      */
-    public function renderActiveForm()
+    public $_configBehavior;
+
+    /**
+     * @return ConfigBehavior
+     */
+    public function getConfigBehavior()
     {
-        return '';
+        return $this->_configBehavior;
+    }
+    /**
+     * @return ConfigBehavior
+     */
+    public function setConfgiBehavior(ConfigBehavior $configBehavior)
+    {
+        $this->_configBehavior = $configBehavior;
+        return $this;
     }
 }

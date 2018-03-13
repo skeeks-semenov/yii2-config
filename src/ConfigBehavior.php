@@ -8,6 +8,8 @@
 
 namespace skeeks\yii2\config;
 
+use skeeks\yii2\config\storages\ConfigSessionStorage;
+use skeeks\yii2\form\IHasForm;
 use yii\base\Behavior;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
@@ -16,7 +18,9 @@ use yii\helpers\ArrayHelper;
 
 /**
  *
- * @property Model $configModel
+ * @property string         $configKey
+ * @property ConfigStorage  $configStorage
+ * @property Model|IHasForm $configModel
  *
  * Class HasConfigBehavior
  * @package skeeks\yii2\config
@@ -26,19 +30,24 @@ class ConfigBehavior extends Behavior
     /**
      * @var string
      */
-    public $namespace;
+    public $_configKey;
+
     /**
-     * @var ???
+     * @var ConfigStorage
      */
-    public $storage;
+    public $_configStorage = [];
+
     /**
-     * @var Model
+     * @var Model|IHasForm
      */
-    protected $_configModel = null;
+    protected $_configModel = [];
+
     /**
+     * Атрибуты вызова компонента
      * @var array
      */
-    protected $_configModelArray = [];
+    protected $_callAttributes = [];
+
     /**
      * @param Component $owner
      */
@@ -50,6 +59,19 @@ class ConfigBehavior extends Behavior
             throw new InvalidConfigException('The behavior must be connected to the child class '.Component::class);
         }
 
+        //Атрибуты вызова компонента
+        $this->_callAttributes = ArrayHelper::toArray($this->owner);
+
+        //Загрузка данных модели из хранилища
+        $data = $this->configStorage->fetch();
+        if ($data) {
+            $this->configModel->setAttributes($data);
+        } else {
+            //Если в хранилище нет данных
+            $this->configModel->setAttributes($this->_callAttributes);
+        }
+
+        //Установка в текущий owner
         foreach ($this->configModel->toArray() as $key => $value) {
             if ($owner->canSetProperty($key)) {
                 $owner->{$key} = $value;
@@ -58,31 +80,103 @@ class ConfigBehavior extends Behavior
     }
 
     /**
-     * @throws InvalidConfigException
+     * @return Component
      */
-    public function init()
+    public function refresh()
     {
-        parent::init();
+        foreach ($this->configModel->toArray() as $key => $value) {
+            if ($this->owner->canSetProperty($key)) {
+                $this->owner->{$key} = $value;
+            }
+        }
+
+        return $this->owner;
     }
+
+
+
     /**
-     * @return Model
+     * @param array|IHasForm $configModel
+     * @return $this
+     */
+    public function setConfigModel($configModel)
+    {
+        $this->_configModel = $configModel;
+        return $this;
+    }
+
+    /**
+     * @return Model|IHasForm
      */
     public function getConfigModel()
     {
-        if ($this->_configModel === null) {
-            $this->_configModel = \Yii::createObject($this->_configModelArray);
+        if (is_array($this->_configModel)) {
+
+            if (!ArrayHelper::getValue($this->_configModel, 'class')) {
+                $this->_configModel['class'] = DynamicConfigModel::class;
+            }
+
+            $this->_configModel = \Yii::createObject($this->_configModel);
         }
+
+        $this->_configModel->setConfgiBehavior($this);
 
         return $this->_configModel;
     }
-    public function setConfigModel($configModel = [])
+
+    /**
+     * @return object|ConfigStorage
+     */
+    public function getConfigStorage()
     {
-        if (!ArrayHelper::getValue($configModel, 'class')) {
-            $this->_configModelArray['class'] = DynamicConfigModel::class;
+        if (is_array($this->_configStorage)) {
+
+            if (!ArrayHelper::getValue($this->_configStorage, 'class')) {
+                $this->_configStorage['class'] = ConfigSessionStorage::class;
+            }
+
+            $this->_configStorage = \Yii::createObject($this->_configStorage);
         }
 
-        $this->_configModelArray = ArrayHelper::merge($this->_configModelArray, $configModel);
+        $this->_configStorage->setConfgiBehavior($this);
+
+        return $this->_configStorage;
+    }
+
+    /**
+     * @param array|ConfigStorage $configStorage
+     * @return $this
+     */
+    public function setConfigStorage($configStorage)
+    {
+        $this->_configStorage = $configStorage;
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getConfigKey()
+    {
+        return $this->_configKey;
+    }
+    /**
+     * @param string $configKey
+     * @return $this
+     */
+    public function setConfigKey($configKey = '')
+    {
+        $this->_configKey = $configKey;
+        return $this;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function saveConfig($runValidation = true, $attributeNames = null)
+    {
+        return $this->configStorage->save($runValidation, $attributeNames);
     }
 
 
