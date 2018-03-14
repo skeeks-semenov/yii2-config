@@ -21,7 +21,7 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
     /**
      * @var array
      */
-    protected $_defineAttributes;
+    protected $_attributeDefines;
 
     /**
      * @var array
@@ -44,8 +44,8 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
 
     public function init()
     {
-        if ($this->_defineAttributes && is_array($this->_defineAttributes)) {
-            foreach ($this->_defineAttributes as $key => $value) {
+        if ($this->_attributeDefines && is_array($this->_attributeDefines)) {
+            foreach ($this->_attributeDefines as $key => $value) {
                 if (is_int($key) && is_string($value)) {
                     $this->defineAttribute($value, null);
                 } else {
@@ -124,12 +124,12 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
     }
 
     /**
-     * @param array $defineAttributes
+     * @param array $attributeDefines
      * @return $this
      */
-    public function setDefineAttributes($defineAttributes = [])
+    public function setattributeDefines($attributeDefines = [])
     {
-        $this->_defineAttributes = $defineAttributes;
+        $this->_attributeDefines = $attributeDefines;
         return $this;
     }
 
