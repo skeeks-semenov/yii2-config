@@ -30,17 +30,17 @@ interface IConfigStorage
      * @param null $attributeNames
      * @return bool
      */
-    public function save($runValidation = true, $attributeNames = null);
+    public function save(ConfigBehavior $configBehavior, $runValidation = true, $attributeNames = null);
 
     /**
      * @param ConfigBehavior $configBehavior
      * @return array
      */
-    public function fetch();
+    public function fetch(ConfigBehavior $configBehavior);
 
     /**
      * @return bool
      */
-    public function delete();
+    public function delete(ConfigBehavior $configBehavior);
 }
 

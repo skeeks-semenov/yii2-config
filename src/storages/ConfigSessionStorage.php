@@ -1,35 +1,33 @@
 <?php
 /**
- * @author Semenov Alexander <semenov@skeeks.com>
  * @link https://skeeks.com/
  * @copyright (c) 2010 SkeekS
- * @date 12.03.2018
  */
 
 namespace skeeks\yii2\config\storages;
 
+use skeeks\yii2\config\ConfigBehavior;
 use skeeks\yii2\config\ConfigStorage;
 use yii\helpers\ArrayHelper;
 
 /**
- * Class ConfigSessionStorage
- * @package skeeks\yii2\config\storages
+ * @author Semenov Alexander <semenov@skeeks.com>
  */
 class ConfigSessionStorage extends ConfigStorage
 {
-    public function save($runValidation = true, $attributeNames = null)
+    public function save(ConfigBehavior $configBehavior, $runValidation = true, $attributeNames = null)
     {
-        $model = $this->configBehavior->configModel;
-        $className = $this->configBehavior->owner->className();
+        $model = $configBehavior->configModel;
+        $configClassName = $configBehavior->configClassName;
 
         if ($runValidation && !$model->validate($attributeNames)) {
-            Yii::info('Model not inserted due to validation error.', $this->configBehavior->owner->className());
+            Yii::info('Model not inserted due to validation error.', $configClassName);
             return false;
         }
 
-        $data = \Yii::$app->session->get($className, []);
-        $data[$this->configBehavior->configKey] = $this->configBehavior->configModel->toArray();
-        \Yii::$app->session->set($className, $data);
+        $data = \Yii::$app->session->get($configClassName, []);
+        $data[$configBehavior->configKey] = $configBehavior->configModel->toArray();
+        \Yii::$app->session->set($configClassName, $data);
 
         return true;
     }
@@ -37,30 +35,30 @@ class ConfigSessionStorage extends ConfigStorage
     /**
      * @return array
      */
-    public function fetch()
+    public function fetch(ConfigBehavior $configBehavior)
     {
-        $className = $this->configBehavior->owner->className();
+        $configClassName = $configBehavior->configClassName;
 
-        if (!$data = \Yii::$app->session->get($className)) {
+        if (!$data = \Yii::$app->session->get($configClassName)) {
             return [];
         }
 
-        return (array)ArrayHelper::getValue($data, $this->configBehavior->configKey);
+        return (array)ArrayHelper::getValue($data, $configBehavior->configKey);
     }
 
     /**
      * @return array
      */
-    public function delete()
+    public function delete(ConfigBehavior $configBehavior)
     {
-        $className = $this->configBehavior->owner->className();
+        $configClassName = $configBehavior->configClassName;
 
-        if (!$data = \Yii::$app->session->get($className)) {
+        if (!$data = \Yii::$app->session->get($configClassName)) {
             return true;
         }
 
-        ArrayHelper::remove($data, $this->configBehavior->configKey);
-        \Yii::$app->session->set($className, $data);
+        ArrayHelper::remove($data, $configBehavior->configKey);
+        \Yii::$app->session->set($configClassName, $data);
     }
 
 }
