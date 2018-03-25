@@ -1,9 +1,8 @@
 <?php
 /**
- * @author Semenov Alexander <semenov@skeeks.com>
- * @link https://skeeks.com/
- * @copyright (c) 2010 SkeekS
- * @date 11.03.2018
+ * @link https://cms.skeeks.com/
+ * @copyright Copyright (c) 2010 SkeekS
+ * @license https://cms.skeeks.com/license/
  */
 
 namespace skeeks\yii2\config;
@@ -20,13 +19,13 @@ use yii\helpers\ArrayHelper;
  *
  * @property string         $configKey
  * @property ConfigStorage  $configStorage
+ * @property ConfigBehavior $configBehavior
  * @property Model|IHasForm $configModel
- * @property array          $callAttributes
- * @property array          $editData
- * @property string         $configClassName
+ * @property array          $callAttributes <p>Атрибуты с которыми был вызван компонент</p>
+ * @property array          $editData <p>Данные для формы редактирования</p>
+ * @property string         $configClassName <p>Название класса используемое для хранения настроек</p>
  *
- * Class HasConfigBehavior
- * @package skeeks\yii2\config
+ * @author Semenov Alexander <semenov@skeeks.com>
  */
 class ConfigBehavior extends Behavior
 {
@@ -46,10 +45,14 @@ class ConfigBehavior extends Behavior
     protected $_configModel = [];
 
     /**
-     * Атрибуты вызова компонента
+     * Атрибуты с которыми был вызван компонент
      * @var array
      */
     protected $_callAttributes = [];
+
+    /**
+     * @var null|string Название класса используемое для хранения настроек
+     */
     protected $_configClassName = null;
     /**
      * @param Component $owner
@@ -72,7 +75,6 @@ class ConfigBehavior extends Behavior
         } else {
             //Если в хранилище нет данных
             $this->configModel->setAttributes($this->_callAttributes);
-
         }
 
         //Установка в текущий owner
@@ -82,10 +84,11 @@ class ConfigBehavior extends Behavior
             }
         }
     }
+
     /**
      * @return Component
      */
-    public function refresh()
+    public function configRefresh()
     {
         foreach ($this->configModel->toArray() as $key => $value) {
             if ($this->owner->canSetProperty($key)) {
@@ -95,6 +98,8 @@ class ConfigBehavior extends Behavior
 
         return $this->owner;
     }
+
+
     /**
      * @return Model|IHasForm
      */
@@ -111,6 +116,7 @@ class ConfigBehavior extends Behavior
 
         return $this->_configModel;
     }
+
     /**
      * @param array|IHasForm $configModel
      * @return $this
@@ -120,6 +126,7 @@ class ConfigBehavior extends Behavior
         $this->_configModel = $configModel;
         return $this;
     }
+
     /**
      * @return object|ConfigStorage
      */
@@ -210,6 +217,14 @@ class ConfigBehavior extends Behavior
     {
         $this->_configClassName = $className;
         return $this->owner;
+    }
+
+    /**
+     * @return $this
+     */
+    public function getConfigBehavior()
+    {
+        return $this;
     }
 }
 

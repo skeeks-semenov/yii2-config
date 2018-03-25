@@ -1,33 +1,21 @@
 <?php
 /**
- * @author Semenov Alexander <semenov@skeeks.com>
- * @link https://skeeks.com/
- * @copyright (c) 2010 SkeekS
- * @date 11.03.2018
+ * @link https://cms.skeeks.com/
+ * @copyright Copyright (c) 2010 SkeekS
+ * @license https://cms.skeeks.com/license/
  */
 
 namespace skeeks\yii2\config;
 
-use skeeks\cms\components\Cms;
-use skeeks\yii2\form\IHasForm;
-use yii\base\Behavior;
-use yii\base\Component;
-use yii\base\InvalidConfigException;
-use yii\base\Model;
-use yii\base\Widget;
-use yii\base\WidgetEvent;
-use yii\helpers\ArrayHelper;
-use yii\helpers\Html;
-
 /**
- * Interface IConfigStorage
- * @package skeeks\yii2\config
+ * @author Semenov Alexander <semenov@skeeks.com>
  */
 interface IConfigStorage
 {
     /**
-     * @param bool $runValidation
-     * @param null $attributeNames
+     * @param ConfigBehavior $configBehavior
+     * @param bool           $runValidation
+     * @param null           $attributeNames
      * @return bool
      */
     public function save(ConfigBehavior $configBehavior, $runValidation = true, $attributeNames = null);
@@ -37,6 +25,12 @@ interface IConfigStorage
      * @return array
      */
     public function fetch(ConfigBehavior $configBehavior);
+
+    /**
+     * @param ConfigBehavior $configBehavior
+     * @return bool
+     */
+    public function exists(ConfigBehavior $configBehavior);
 
     /**
      * @return bool

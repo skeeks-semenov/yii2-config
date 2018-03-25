@@ -1,7 +1,8 @@
 <?php
 /**
- * @link https://skeeks.com/
- * @copyright (c) 2010 SkeekS
+ * @link https://cms.skeeks.com/
+ * @copyright Copyright (c) 2010 SkeekS
+ * @license https://cms.skeeks.com/license/
  */
 
 namespace skeeks\yii2\config\storages;

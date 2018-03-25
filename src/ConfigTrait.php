@@ -1,30 +1,28 @@
 <?php
 /**
- * @author Semenov Alexander <semenov@skeeks.com>
- * @link https://skeeks.com/
- * @copyright (c) 2010 SkeekS
- * @date 11.03.2018
+ * @link https://cms.skeeks.com/
+ * @copyright Copyright (c) 2010 SkeekS
+ * @license https://cms.skeeks.com/license/
  */
 
 namespace skeeks\yii2\config;
 
-use skeeks\cms\components\Cms;
 use skeeks\yii2\form\IHasForm;
-use yii\base\Behavior;
-use yii\base\Component;
-use yii\base\InvalidConfigException;
 use yii\base\Model;
-use yii\base\Widget;
-use yii\base\WidgetEvent;
-use yii\helpers\ArrayHelper;
-use yii\helpers\Html;
 
 /**
- * @property Model|IHasForm $configModel
- * @method $this $refresh
+ * @see ConfigBehavior
  *
- * Class ConfigTrait
- * @package skeeks\yii2\config
+ * @property Model|IHasForm $configModel
+ * @property ConfigStorage  $configStorage
+ * @property ConfigBehavior $configBehavior
+ * @property array          $callAttributes
+ * @property string         $configClassName
+ * @property string         $configKey
+ *
+ * @method $this configRefresh()
+ *
+ * @author Semenov Alexander <semenov@skeeks.com>
  */
 trait ConfigTrait
 {

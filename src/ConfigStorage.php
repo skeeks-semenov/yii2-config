@@ -1,31 +1,16 @@
 <?php
 /**
- * @author Semenov Alexander <semenov@skeeks.com>
- * @link https://skeeks.com/
- * @copyright (c) 2010 SkeekS
- * @date 11.03.2018
+ * @link https://cms.skeeks.com/
+ * @copyright Copyright (c) 2010 SkeekS
+ * @license https://cms.skeeks.com/license/
  */
 
 namespace skeeks\yii2\config;
 
-use skeeks\cms\components\Cms;
-use skeeks\yii2\form\IHasForm;
-use yii\base\Arrayable;
-use yii\base\ArrayableTrait;
-use yii\base\Behavior;
 use yii\base\Component;
-use yii\base\InvalidConfigException;
-use yii\base\Model;
-use yii\base\Widget;
-use yii\base\WidgetEvent;
-use yii\helpers\ArrayHelper;
-use yii\helpers\Html;
 
 /**
- * @property ConfigBehavior $configBehavior
- *
- * Class ConfigStorage
- * @package skeeks\yii2\config
+ * @author Semenov Alexander <semenov@skeeks.com>
  */
 class ConfigStorage extends Component implements IConfigStorage
 {
@@ -38,6 +23,15 @@ class ConfigStorage extends Component implements IConfigStorage
     public function save(ConfigBehavior $configBehavior, $runValidation = true, $attributeNames = null)
     {
         return true;
+    }
+
+    /**
+     * @param ConfigBehavior $configBehavior
+     * @return bool
+     */
+    public function exists(ConfigBehavior $configBehavior)
+    {
+        return (bool)$this->fetch($configBehavior);
     }
 
     /**

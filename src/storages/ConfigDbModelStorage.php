@@ -1,14 +1,14 @@
 <?php
 /**
- * @link https://skeeks.com/
- * @copyright (c) 2010 SkeekS
+ * @link https://cms.skeeks.com/
+ * @copyright Copyright (c) 2010 SkeekS
+ * @license https://cms.skeeks.com/license/
  */
 
 namespace skeeks\yii2\config\storages;
 
 use skeeks\yii2\config\ConfigBehavior;
 use skeeks\yii2\config\ConfigStorage;
-use yii\base\Arrayable;
 use yii\base\InvalidConfigException;
 use yii\base\NotSupportedException;
 use yii\db\ActiveRecord;
@@ -90,11 +90,11 @@ class ConfigDbModelStorage extends ConfigStorage
         $configClassName = $configBehavior->configClassName;
 
         if ($runValidation && !$configModel->validate($attributeNames)) {
-            Yii::info('Model not inserted due to validation error.', $configClassName);
+            \Yii::info('Model not inserted due to validation error.', $configClassName);
             return false;
         }
 
-        $data = (array) $this->model->{$this->attribute};
+        $data = (array)$this->model->{$this->attribute};
 
         $data[$configClassName][$configBehavior->configKey] = $configModel->toArray();
         $this->model->{$this->attribute} = $data;
@@ -112,8 +112,8 @@ class ConfigDbModelStorage extends ConfigStorage
      */
     public function fetch(ConfigBehavior $configBehavior)
     {
-        $data = (array) $this->model->{$this->attribute};
-        return (array) ArrayHelper::getValue($data, $configBehavior->configClassName . '.' . $configBehavior->configKey, []);
+        $data = (array)$this->model->{$this->attribute};
+        return (array)ArrayHelper::getValue($data, $configBehavior->configClassName.'.'.$configBehavior->configKey, []);
     }
 
     /**
