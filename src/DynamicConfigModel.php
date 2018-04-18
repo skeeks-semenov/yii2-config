@@ -19,15 +19,17 @@ use yii\helpers\ArrayHelper;
 class DynamicConfigModel extends DynamicModel implements IHasForm
 {
     /**
+     * @var ConfigBehavior
+     */
+    public $_configBehavior;
+    /**
      * @var array
      */
     protected $_attributeDefines;
-
     /**
      * @var array
      */
     protected $_fields = [];
-
     /**
      * @var array
      */
@@ -36,11 +38,27 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
      * @var array
      */
     protected $_attributeLabels = [];
-
     /**
      * @var array
      */
     protected $_attributeHints = [];
+
+    /**
+     * @var string
+     */
+    public $formName = 'f';
+
+    /**
+     * @return null|string
+     */
+    public function formName()
+    {
+        if ($this->formName === null) {
+            return parent::formName();
+        }
+
+        return $this->formName;
+    }
 
     public function init()
     {
@@ -51,13 +69,22 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
                 } else {
                     $this->defineAttribute($key, $value);
                 }
+            }
+        }
 
+        if ($this->_fields) {
+            foreach ($this->_fields as $key => $value) {
+                if (is_string($key)) {
+                    if (!isset($this->{$key})) {
+                        $this->defineAttribute($key, null);
+                    }
+                }
+                //TODO:доделать другие случаи
             }
         }
 
         parent::init();
     }
-
     /**
      * @return array
      */
@@ -65,7 +92,6 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
     {
         return ArrayHelper::merge(parent::rules(), (array)$this->_rules);
     }
-
     /**
      * @return array
      */
@@ -73,7 +99,6 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
     {
         return ArrayHelper::merge(parent::attributeLabels(), (array)$this->_attributeLabels);
     }
-
     /**
      * @return array
      */
@@ -81,8 +106,6 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
     {
         return ArrayHelper::merge(parent::attributeHints(), (array)$this->_attributeHints);
     }
-
-
     /**
      * @param array $fields
      * @return $this
@@ -92,7 +115,6 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
         $this->_fields = $fields;
         return $this;
     }
-
     /**
      * @param array $rules
      * @return $this
@@ -102,7 +124,6 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
         $this->_rules = $rules;
         return $this;
     }
-
     /**
      * @param array $attributeLabels
      * @return $this
@@ -112,7 +133,6 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
         $this->_attributeLabels = $attributeLabels;
         return $this;
     }
-
     /**
      * @param array $attributeHints
      * @return $this
@@ -122,7 +142,6 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
         $this->_attributeHints = $attributeHints;
         return $this;
     }
-
     /**
      * @param array $attributeDefines
      * @return $this
@@ -132,7 +151,6 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
         $this->_attributeDefines = $attributeDefines;
         return $this;
     }
-
     /**
      * @see Builder
      * @return array
@@ -141,7 +159,6 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
     {
         return $this->_fields;
     }
-
     /**
      * @see Builder
      * @return array
@@ -150,12 +167,6 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
     {
         return [];
     }
-
-    /**
-     * @var ConfigBehavior
-     */
-    public $_configBehavior;
-
     /**
      * @return ConfigBehavior
      */
