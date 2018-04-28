@@ -23,6 +23,10 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
      */
     public $_configBehavior;
     /**
+     * @var string
+     */
+    public $formName = 'f';
+    /**
      * @var array
      */
     protected $_attributeDefines;
@@ -42,12 +46,6 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
      * @var array
      */
     protected $_attributeHints = [];
-
-    /**
-     * @var string
-     */
-    public $formName = 'f';
-
     /**
      * @return null|string
      */
@@ -97,7 +95,27 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
      */
     public function attributeLabels()
     {
-        return ArrayHelper::merge(parent::attributeLabels(), (array)$this->_attributeLabels);
+        $labels = ArrayHelper::merge(parent::attributeLabels(), (array)$this->_attributeLabels);
+
+        foreach ($this->builderFields() as $key => $field) {
+            if (!ArrayHelper::getValue($labels, $key)) {
+                if (is_object($field)) {
+                    $labels[$key] = ArrayHelper::getValue($field, 'label');
+                } else if (is_array($field)) {
+                    $labels[$key] = ArrayHelper::getValue($field, 'label');
+                }
+            }
+        }
+
+        return $labels;
+    }
+    /**
+     * @see Builder
+     * @return array
+     */
+    public function builderFields()
+    {
+        return $this->_fields;
     }
     /**
      * @return array
@@ -150,14 +168,6 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
     {
         $this->_attributeDefines = $attributeDefines;
         return $this;
-    }
-    /**
-     * @see Builder
-     * @return array
-     */
-    public function builderFields()
-    {
-        return $this->_fields;
     }
     /**
      * @see Builder

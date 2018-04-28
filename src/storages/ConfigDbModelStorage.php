@@ -121,6 +121,22 @@ class ConfigDbModelStorage extends ConfigStorage
      */
     public function delete(ConfigBehavior $configBehavior)
     {
-        throw new NotSupportedException('!!!');
+        $configModel = $configBehavior->configModel;
+        $configClassName = $configBehavior->configClassName;
+        
+        $data = (array)$this->model->{$this->attribute};
+
+        if (isset($data[$configClassName][$configBehavior->configKey])) {
+            unset($data[$configClassName][$configBehavior->configKey]);
+        }
+
+        $this->model->{$this->attribute} = $data;
+
+        if (!$this->model->save()) {
+            throw new Exception(print_r($this->model->errors, true));
+            return false;
+        }
+
+        return true;
     }
 }

@@ -54,17 +54,17 @@ class ConfigBehavior extends Behavior
      * @var null|string Название класса используемое для хранения настроек
      */
     protected $_configClassName = null;
-    /**
-     * @param Component $owner
-     */
-    public function attach($owner)
+
+    public function events()
     {
-        parent::attach($owner);
+        return [
+            'init' => '_setSettings'
+        ];
+    }
 
-        if (!$this->owner instanceof Component) {
-            throw new InvalidConfigException('The behavior must be connected to the child class '.Component::class);
-        }
-
+    public function _setSettings()
+    {
+        $owner = $this->owner;
         //Атрибуты вызова компонента
         $this->_callAttributes = ArrayHelper::toArray($this->owner);
 
@@ -81,8 +81,24 @@ class ConfigBehavior extends Behavior
         foreach ($this->configModel->toArray() as $key => $value) {
             if ($owner->canSetProperty($key)) {
                 $owner->{$key} = $value;
+                \Yii::error("$key: " . print_r($value, true) . "; " . (new \ReflectionClass($owner))->getShortName());
             }
         }
+
+        \Yii::error('2' . (new \ReflectionClass($owner))->getShortName());
+    }
+    /**
+     * @param Component $owner
+     */
+    public function attach($owner)
+    {
+        parent::attach($owner);
+
+        if (!$this->owner instanceof Component) {
+            throw new InvalidConfigException('The behavior must be connected to the child class '.Component::class);
+        }
+
+
     }
 
     /**
@@ -90,6 +106,15 @@ class ConfigBehavior extends Behavior
      */
     public function configRefresh()
     {
+        //Загрузка данных модели из хранилища
+        $data = $this->configStorage->fetch($this);
+        if ($data) {
+            $this->configModel->setAttributes($data);
+        } else {
+            //Если в хранилище нет данных
+            $this->configModel->setAttributes($this->_callAttributes);
+        }
+        
         foreach ($this->configModel->toArray() as $key => $value) {
             if ($this->owner->canSetProperty($key)) {
                 $this->owner->{$key} = $value;
