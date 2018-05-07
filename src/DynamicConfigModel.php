@@ -10,6 +10,7 @@ namespace skeeks\yii2\config;
 
 use skeeks\yii2\form\IHasForm;
 use yii\base\DynamicModel;
+use yii\base\Event;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -46,6 +47,12 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
      * @var array
      */
     protected $_attributeHints = [];
+
+    /**
+     * @var array
+     */
+    protected $_builderModels = [];
+
     /**
      * @return null|string
      */
@@ -175,8 +182,19 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
      */
     public function builderModels()
     {
-        return [];
+        return $this->_builderModels;
     }
+
+    /**
+     * @param array $models
+     * @return $this
+     */
+    public function setBuilderModels($models = [])
+    {
+        $this->_builderModels = $models;
+        return $this;
+    }
+
     /**
      * @return ConfigBehavior
      */
@@ -192,4 +210,20 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
         $this->_configBehavior = $configBehavior;
         return $this;
     }
+
+    /**
+     * @param array $data
+     * @param null  $formName
+     * @return bool
+     */
+    /*public function load($data, $formName = null)
+    {
+        $result = parent::load($data, $formName);
+
+        $this->trigger('load', new Event([
+            'data' => $data
+        ]));
+
+        return $result;
+    }*/
 }
