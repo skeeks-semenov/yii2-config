@@ -81,11 +81,8 @@ class ConfigBehavior extends Behavior
         foreach ($this->configModel->toArray() as $key => $value) {
             if ($owner->canSetProperty($key)) {
                 $owner->{$key} = $value;
-                \Yii::error("$key: " . print_r($value, true) . "; " . (new \ReflectionClass($owner))->getShortName());
             }
         }
-
-        \Yii::error('2' . (new \ReflectionClass($owner))->getShortName());
     }
     /**
      * @param Component $owner
