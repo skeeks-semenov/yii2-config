@@ -9,8 +9,10 @@
 namespace skeeks\yii2\config;
 
 use skeeks\yii2\form\IHasForm;
-use yii\base\Event;
 use yii\base\Model;
+use yii\base\ModelEvent;
+use yii\db\ActiveRecord;
+use yii\db\AfterSaveEvent;
 
 /**
  * @property ConfigBehavior $configBehavior
@@ -60,36 +62,105 @@ class ConfigModel extends Model implements IHasForm
         return $this;
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
-     * @param array $data
-     * @param null  $formName
+     * @var array attribute values indexed by attribute names
+     */
+    private $_attributes = [];
+    /**
+     * @var array|null old attribute values indexed by attribute names.
+     * This is `null` if the record [[isNewRecord|is new]].
+     */
+    private $_oldAttributes;
+
+
+
+    /**
+     * @param $insert
      * @return bool
      */
-    /*public function load($data, $formName = null)
+    public function beforeSave($insert)
     {
-        $result = parent::load($data, $formName);
+        $event = new ModelEvent();
+        $this->trigger($insert ? ActiveRecord::EVENT_BEFORE_INSERT : ActiveRecord::EVENT_BEFORE_UPDATE, $event);
 
-        $this->trigger('load', new Event([
-            'data' => $data
+        return $event->isValid;
+    }
+
+    /**
+     * @param $insert
+     * @param $changedAttributes
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        $this->trigger($insert ? ActiveRecord::EVENT_AFTER_INSERT : ActiveRecord::EVENT_AFTER_UPDATE, new AfterSaveEvent([
+            'changedAttributes' => $changedAttributes,
         ]));
+    }
 
-        return $result;
-    }*/
 
     /**
-     * @param array $data
-     * @param null  $formName
      * @return bool
      */
-    /*public function load($data, $formName = null)
+    public function beforeDelete()
     {
-        if ($this->builderModels()) {
-            foreach ($this->builderModels() as $model)
-            {
-                $model->load($data, $formName);
-            }
-        }
+        $event = new ModelEvent();
+        $this->trigger(ActiveRecord::EVENT_BEFORE_DELETE, $event);
 
-        return parent::load($data, $formName);
-    }*/
+        return $event->isValid;
+    }
+
+    /**
+     *
+     */
+    public function afterDelete()
+    {
+        $this->trigger(ActiveRecord::EVENT_AFTER_DELETE);
+    }
+
+
+
+    /**
+     * Returns a value indicating whether the model has an attribute with the specified name.
+     * @param string $name the name of the attribute
+     * @return bool whether the model has an attribute with the specified name.
+     */
+    public function hasAttribute($name)
+    {
+        return isset($this->_attributes[$name]) || in_array($name, $this->attributes(), true);
+    }
+
+    /**
+     * Returns the named attribute value.
+     * If this record is the result of a query and the attribute is not loaded,
+     * `null` will be returned.
+     * @param string $name the attribute name
+     * @return mixed the attribute value. `null` if the attribute is not set or does not exist.
+     * @see hasAttribute()
+     */
+    public function getAttribute($name)
+    {
+        return isset($this->_attributes[$name]) ? $this->_attributes[$name] : null;
+    }
 }
