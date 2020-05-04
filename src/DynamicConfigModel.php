@@ -39,10 +39,7 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
      * @var array
      */
     protected $_rules = [];
-    /**
-     * @var array
-     */
-    protected $_attributeLabels = [];
+   
     /**
      * @var array
      */
@@ -102,7 +99,7 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
      */
     public function attributeLabels()
     {
-        $labels = ArrayHelper::merge(parent::attributeLabels(), (array)$this->_attributeLabels);
+        $labels = parent::attributeLabels();
 
         foreach ($this->builderFields() as $key => $field) {
             if (!ArrayHelper::getValue($labels, $key)) {
@@ -149,15 +146,7 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
         $this->_rules = $rules;
         return $this;
     }
-    /**
-     * @param array $attributeLabels
-     * @return $this
-     */
-    public function setAttributeLabels($attributeLabels = [])
-    {
-        $this->_attributeLabels = $attributeLabels;
-        return $this;
-    }
+  
     /**
      * @param array $attributeHints
      * @return $this
