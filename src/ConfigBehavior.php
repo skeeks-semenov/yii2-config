@@ -66,7 +66,16 @@ class ConfigBehavior extends Behavior
     {
         $owner = $this->owner;
         //Атрибуты вызова компонента
-        $this->_callAttributes = ArrayHelper::toArray($this->owner);
+        //$properties = array_keys($this->configModel->toArray());
+        $callAttributes = ArrayHelper::toArray($this->owner);
+        /*foreach ($callAttributes as $key => $value)
+        {
+            if (!in_array($key, $properties)) {
+                unset($callAttributes[$key]);
+            }
+        }*/
+
+        $this->_callAttributes = $callAttributes;
 
         //Загрузка данных модели из хранилища
         $data = $this->configStorage->fetch($this);

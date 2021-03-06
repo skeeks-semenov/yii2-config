@@ -79,6 +79,7 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
                 if (is_string($key)) {
                     if (!isset($this->{$key})) {
                         $this->defineAttribute($key, null);
+                        $this->addRule($key, 'safe');
                     }
                 }
                 //TODO:доделать другие случаи
