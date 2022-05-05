@@ -74,6 +74,15 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
             }
         }
 
+        if ($this->attributeLabels()) {
+            foreach ($this->attributeLabels() as $key => $label)
+            {
+                if (!isset($this->_attributes[$key])) {
+                    $this->defineAttribute($key, null);
+                }
+            }
+        }
+
         if ($this->_fields) {
             foreach ($this->_fields as $key => $value) {
                 if (is_string($key)) {

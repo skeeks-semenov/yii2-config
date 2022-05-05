@@ -55,25 +55,28 @@ class ConfigBehavior extends Behavior
      */
     protected $_configClassName = null;
 
+    /**
+     * @var bool
+     */
+    public $isSetSettingsOnInit = true;
+
     public function events()
     {
-        return [
-            'init' => '_setSettings'
-        ];
+        if ($this->isSetSettingsOnInit) {
+            return [
+                'init' => 'setSettings'
+            ];
+        }
+
+        return parent::events();
+
     }
 
-    public function _setSettings()
+    public function setSettings()
     {
         $owner = $this->owner;
         //Атрибуты вызова компонента
-        //$properties = array_keys($this->configModel->toArray());
         $callAttributes = ArrayHelper::toArray($this->owner);
-        /*foreach ($callAttributes as $key => $value)
-        {
-            if (!in_array($key, $properties)) {
-                unset($callAttributes[$key]);
-            }
-        }*/
 
         $this->_callAttributes = $callAttributes;
 
