@@ -112,7 +112,7 @@ class DynamicConfigModel extends DynamicModel implements IHasForm
         $labels = parent::attributeLabels();
 
         if ($this->builderFields()) {
-            foreach ($this->builderFields() as $key => $field) {
+            foreach ((array)$this->builderFields() as $key => $field) {
                 if (!ArrayHelper::getValue($labels, $key)) {
                     if (is_object($field)) {
                         $labels[$key] = ArrayHelper::getValue($field, 'label');
